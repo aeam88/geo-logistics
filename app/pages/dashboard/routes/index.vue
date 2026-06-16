@@ -246,6 +246,71 @@
         </form>
       </div>
     </div>
+
+    <div v-if="showEditModal && editingRoute" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showEditModal = false"></div>
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-slate-800">Editar Ruta</h2>
+          <button @click="showEditModal = false" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="saveEdit" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Conductor</label>
+            <select v-model="editForm.driverId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+              <option value="">Sin conductor</option>
+              <option v-for="d in availableDrivers" :key="d.id" :value="d.id">{{ d.vehiclePlate }} ({{ d.status }})</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Zona</label>
+            <select v-model="editForm.zoneId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+              <option value="">Sin zona</option>
+              <option v-for="z in zonesList" :key="z.id" :value="z.id">{{ z.name }}</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Fecha</label>
+            <input v-model="editForm.date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Distancia Est. (km)</label>
+              <input v-model.number="editForm.optimizedDistanceKm" type="number" step="0.1" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Duración Est. (min)</label>
+              <input v-model.number="editForm.estimatedDurationMins" type="number" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Estado</label>
+            <select v-model="editForm.status" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+              <option value="pendiente">Pendiente</option>
+              <option value="despachada">Despachada</option>
+              <option value="completada">Completada</option>
+            </select>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" @click="showEditModal = false" class="flex-1 py-3 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+              Cancelar
+            </button>
+            <button type="submit" :disabled="savingEdit" class="flex-1 py-3 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              <div v-if="savingEdit" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              {{ savingEdit ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -472,9 +537,61 @@ const despacharRoute = async (routeId: string) => {
   }
 };
 
+const showEditModal = ref(false);
+const editingRoute = ref<any>(null);
+const editForm = ref({
+  driverId: '',
+  zoneId: '',
+  date: '',
+  optimizedDistanceKm: undefined as number | undefined,
+  estimatedDurationMins: undefined as number | undefined,
+  status: '' as string,
+});
+const savingEdit = ref(false);
+
 const editRoute = (route: any) => {
-  console.log('Edit route:', route);
-  alert('Función de edición en desarrollo. Puedes despachar la ruta desde la tabla.');
+  editingRoute.value = route;
+  editForm.value = {
+    driverId: route.driverId || '',
+    zoneId: route.zoneId || '',
+    date: route.date || '',
+    optimizedDistanceKm: route.optimizedDistanceKm || undefined,
+    estimatedDurationMins: route.estimatedDurationMins || undefined,
+    status: route.status || 'pendiente',
+  };
+  showEditModal.value = true;
+};
+
+const saveEdit = async () => {
+  if (!editingRoute.value) return;
+  savingEdit.value = true;
+  try {
+    await $fetch(`/api/routes/${editingRoute.value.id}`, {
+      method: 'PUT',
+      headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+      body: editForm.value,
+    });
+    showEditModal.value = false;
+    editingRoute.value = null;
+    refresh();
+  } catch (e: any) {
+    alert('Error guardando: ' + (e?.data?.statusMessage || e.message));
+  } finally {
+    savingEdit.value = false;
+  }
+};
+
+const deleteRoute = async (routeId: string) => {
+  if (!confirm('¿Eliminar esta ruta?')) return;
+  try {
+    await $fetch(`/api/routes/${routeId}`, {
+      method: 'DELETE',
+      headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+    });
+    refresh();
+  } catch (e: any) {
+    alert('Error eliminando: ' + (e?.data?.statusMessage || e.message));
+  }
 };
 
 const formatDate = (dateStr: string) => {
