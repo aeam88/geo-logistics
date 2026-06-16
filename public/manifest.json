@@ -1,0 +1,25 @@
+{
+  "name": "GeoLogistics - Conductor",
+  "short_name": "GeoLogistics",
+  "description": "Aplicación de logística y seguimiento de rutas para conductores",
+  "start_url": "/chofer",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["logistics", "navigation", "transportation"]
+}

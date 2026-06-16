@@ -1,0 +1,137 @@
+<template>
+  <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl">
+        <div class="text-center mb-8">
+          <div class="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold text-white">Crear Cuenta</h1>
+          <p class="text-slate-400 text-sm mt-1">Regístrate como conductor</p>
+        </div>
+
+        <form @submit.prevent="handleRegister" class="space-y-5">
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-1.5">Nombre</label>
+            <input
+              v-model="name"
+              type="text"
+              placeholder="Tu nombre"
+              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+              :disabled="loading"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-1.5">Email</label>
+            <input
+              v-model="email"
+              type="email"
+              placeholder="tu@email.com"
+              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+              :disabled="loading"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-1.5">Contraseña</label>
+            <input
+              v-model="password"
+              type="password"
+              placeholder="••••••••"
+              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+              :disabled="loading"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-1.5">Patente del vehículo</label>
+            <input
+              v-model="vehiclePlate"
+              type="text"
+              placeholder="Ej: FL-99-PT"
+              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors uppercase"
+              :disabled="loading"
+            />
+          </div>
+
+          <div v-if="error" class="px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
+            {{ error }}
+          </div>
+
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full py-3 rounded-xl font-bold text-base bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <div v-if="loading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            {{ loading ? 'Registrando...' : 'Crear Cuenta' }}
+          </button>
+        </form>
+
+        <p class="text-center mt-6 text-sm text-slate-500">
+          ¿Ya tienes cuenta?
+          <NuxtLink to="/login" class="text-indigo-400 hover:text-indigo-300 font-semibold">
+            Iniciar Sesión
+          </NuxtLink>
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { authClient } from '../utils/auth'
+
+definePageMeta({
+  title: 'Registrarse',
+})
+
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const vehiclePlate = ref('')
+const error = ref('')
+const loading = ref(false)
+
+const handleRegister = async () => {
+  error.value = ''
+  loading.value = true
+
+  try {
+    const { data, error: authError } = await authClient.signUp.email({
+      name: name.value,
+      email: email.value,
+      password: password.value,
+    })
+
+    if (authError) {
+      error.value = authError.message || 'Error al registrarse'
+      return
+    }
+
+    if (data?.user) {
+      const res = await $fetch('/api/drivers/register', {
+        method: 'POST',
+        body: {
+          userId: data.user.id,
+          vehiclePlate: vehiclePlate.value,
+        },
+      })
+
+      if (res.success) {
+        await navigateTo('/chofer')
+      } else {
+        error.value = 'Usuario creado pero error al registrar vehículo'
+      }
+    }
+  } catch (e: any) {
+    error.value = e?.message || 'Error al registrarse'
+  } finally {
+    loading.value = false
+  }
+}
+</script>
