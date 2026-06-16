@@ -144,9 +144,10 @@ const renderStops = (stops: Array<{ id: string; lat: number; lng: number; client
     else if (stop.status === 'fallido') colorClass = 'bg-rose-500';
 
     const customIcon = L.divIcon({
-      className: `${colorClass} text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md border-2 border-white`,
-      html: `<span>${stop.stopOrder}</span>`,
-      iconSize: [24, 24]
+      className: '',
+      html: `<div style="width:24px;height:24px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:11px;color:white;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white;" class="${colorClass}">${stop.stopOrder}</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
 
     L.marker([stop.lat, stop.lng], { icon: customIcon })
@@ -270,3 +271,4 @@ onBeforeUnmount(() => {
   }
 });
 </script>
+
