@@ -12,25 +12,24 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui'],
   css: ['./app/assets/css/main.css'],
 
-  // PWA Configuration
   app: {
     head: {
       title: 'GeoLogistics',
       meta: [
-        { name: 'theme-color', content: '#10b981' },
+        { name: 'theme-color', content: '#6366f1' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
       ],
       link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
+        { rel: 'apple-touch-icon', href: '/icon-192.svg' },
         { rel: 'manifest', href: '/manifest.json' },
       ],
     },
   },
 
-  // Nitro config
   nitro: {
     serveStatic: true,
-    // Security headers
     routeRules: {
       '**': {
         headers: {
@@ -41,7 +40,6 @@ export default defineNuxtConfig({
           'Permissions-Policy': 'camera=(), microphone=(), geolocation=(self)',
         },
       },
-      // CORS para API
       '/api/**': {
         headers: {
           'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN || '*',
@@ -50,7 +48,6 @@ export default defineNuxtConfig({
           'Access-Control-Allow-Credentials': 'true',
         },
       },
-      // Cache para assets estáticos
       '/_nuxt/**': {
         headers: {
           'Cache-Control': 'public, max-age=31536000, immutable',
