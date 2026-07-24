@@ -352,7 +352,7 @@
       </div>
     </div>
 
-    <div v-if="confirmOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+    <div v-if="confirmOpen" class="fixed inset-0 z-10000 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="confirmOnCancel"></div>
       <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 space-y-4">
         <h2 class="text-lg font-bold text-slate-800">{{ confirmOpts.title }}</h2>
