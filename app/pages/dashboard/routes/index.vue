@@ -127,9 +127,8 @@
                           @dragleave="onDragLeave"
                           @drop="onDrop(route.id, $event)"
                         >
+                          <div v-for="(stop, idx) in routeStops" :key="stop.id">
                           <div
-                            v-for="(stop, idx) in routeStops"
-                            :key="stop.id"
                             draggable="true"
                             @dragstart="onDragStart(stop.id, idx)"
                             @dragend="onDragEnd"
@@ -158,6 +157,24 @@
                             <div v-if="stop.timeWindowStart" class="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
                               {{ stop.timeWindowStart }} - {{ stop.timeWindowEnd }}
                             </div>
+                            <button v-if="stop.status === 'entregado'"
+                              @click.stop="toggleStopEvidence(stop.id)"
+                              class="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 transition-colors">
+                              {{ expandedStopEvidence === stop.id ? 'Ocultar' : 'Evidencia' }}
+                            </button>
+                          </div>
+                          <div v-if="expandedStopEvidence === stop.id" class="ml-12 mb-2">
+                            <div v-if="evidenceLoading[stop.id]" class="text-xs text-slate-400 py-2">Cargando evidencia...</div>
+                            <div v-else-if="stopEvidence[stop.id]?.length" class="space-y-2">
+                              <div v-for="ev in stopEvidence[stop.id]" :key="ev.id" class="bg-white rounded-lg border border-gray-100 p-3 space-y-2">
+                                <img v-if="ev.photoUrl" :src="ev.photoUrl" loading="lazy" class="w-full max-w-xs rounded-lg border border-gray-200" alt="Foto de entrega" />
+                                <img v-if="ev.signatureData" :src="ev.signatureData" loading="lazy" class="h-16 rounded border border-gray-200 bg-white p-1" alt="Firma" />
+                                <div v-if="ev.recipientName" class="text-xs text-slate-600"><span class="font-bold">Recibe:</span> {{ ev.recipientName }}</div>
+                                <div v-if="ev.notes" class="text-xs text-slate-500 italic">{{ ev.notes }}</div>
+                              </div>
+                            </div>
+                            <div v-else class="text-xs text-slate-400 py-1">Sin evidencia registrada</div>
+                          </div>
                           </div>
                         </div>
                       </div>
@@ -395,6 +412,9 @@ const zonesList = computed(() => zonesData.value?.data?.zones ?? []);
 
 const routeStops = ref<any[]>([]);
 const routeStopsLoading = ref(false);
+const stopEvidence = ref<Record<string, any[]>>({});
+const evidenceLoading = ref<Record<string, boolean>>({});
+const expandedStopEvidence = ref<string | null>(null);
 
 const draggedStopId = ref<string | null>(null);
 const draggedStopIndex = ref<number>(-1);
@@ -498,6 +518,26 @@ const toggleExpand = async (routeId: string) => {
     routeStops.value = [];
   } finally {
     routeStopsLoading.value = false;
+  }
+};
+
+const toggleStopEvidence = async (stopId: string) => {
+  if (expandedStopEvidence.value === stopId) {
+    expandedStopEvidence.value = null;
+    return;
+  }
+  expandedStopEvidence.value = stopId;
+  if (stopEvidence.value[stopId]) return;
+  evidenceLoading.value[stopId] = true;
+  try {
+    const res = await $fetch(`/api/stops/${stopId}/evidence`, {
+      headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+    });
+    stopEvidence.value[stopId] = res.data || [];
+  } catch {
+    stopEvidence.value[stopId] = [];
+  } finally {
+    evidenceLoading.value[stopId] = false;
   }
 };
 
