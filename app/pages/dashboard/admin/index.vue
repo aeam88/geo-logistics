@@ -113,7 +113,7 @@
       </div>
     </main>
 
-    <div v-if="showInviteModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div v-if="showInviteModal" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showInviteModal = false"></div>
       <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
         <h3 class="text-lg font-bold text-slate-800">Invitar Usuario</h3>
@@ -140,7 +140,7 @@
       </div>
     </div>
 
-    <div v-if="showCreateOrgModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div v-if="showCreateOrgModal" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showCreateOrgModal = false"></div>
       <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
         <h3 class="text-lg font-bold text-slate-800">Crear Organización</h3>
@@ -168,6 +168,8 @@ import { ref, computed, onMounted } from 'vue';
 import { authClient } from '../../../utils/auth';
 
 useHead({ title: 'Admin Panel | GeoLogistics' });
+
+const toast = useToast();
 
 const activeTab = ref<'users' | 'invitations' | 'settings'>('users');
 const tabs = [
@@ -225,9 +227,9 @@ const sendInvite = async () => {
     });
     showInviteModal.value = false;
     inviteEmail.value = '';
-    alert('Invitación enviada. Comparte el token con el usuario.');
+    toast.add({ title: 'Invitación enviada', description: 'Comparte el token con el usuario.', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   } finally {
     sendingInvite.value = false;
   }
@@ -260,7 +262,7 @@ const createOrg = async () => {
     orgSlug.value = '';
     refreshOrgs();
   } catch (e: any) {
-    alert('Error: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   } finally {
     creatingOrg.value = false;
   }
@@ -274,8 +276,9 @@ const changeRole = async (userId: string, newRole: string) => {
       body: { userId, organizationId: currentOrg.value?.id, role: newRole },
     });
     refreshUsers();
+    toast.add({ title: 'Rol actualizado', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   }
 };
 

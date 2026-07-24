@@ -101,6 +101,28 @@
         </div>
       </div>
     </div>
+
+    <div v-if="confirmOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="confirmOnCancel"></div>
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+        <h2 class="text-lg font-bold text-slate-800">{{ confirmOpts.title }}</h2>
+        <p v-if="confirmOpts.description" class="text-sm text-slate-500">{{ confirmOpts.description }}</p>
+        <div class="flex gap-3 pt-2">
+          <button @click="confirmOnCancel" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+            {{ confirmOpts.cancelLabel }}
+          </button>
+          <button @click="confirmOnConfirm" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
+            :class="{
+              'bg-red-600 hover:bg-red-500 shadow-red-500/20': confirmOpts.confirmColor === 'error',
+              'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/20': confirmOpts.confirmColor === 'primary',
+              'bg-amber-600 hover:bg-amber-500 shadow-amber-500/20': confirmOpts.confirmColor === 'warning',
+              'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20': confirmOpts.confirmColor === 'success',
+            }">
+            {{ confirmOpts.confirmLabel }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -109,10 +131,15 @@ import { ref, computed } from 'vue';
 
 useHead({ title: 'Gestión de Zonas | GeoLogistics' });
 
+const toast = useToast();
+const { isOpen: confirmOpen, options: confirmOpts, confirm, onConfirm: confirmOnConfirm, onCancel: confirmOnCancel } = useConfirm();
+
 const activeTab = ref<'list' | 'create'>('list');
 const selectedZone = ref<any>(null);
 
-const { data, pending, refresh } = await useFetch('/api/dashboard');
+const { data, pending, refresh } = await useFetch('/api/dashboard', {
+  headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+});
 const zones = computed(() => data.value?.data?.zones ?? []);
 
 const onZoneSaved = () => {
@@ -126,7 +153,13 @@ const formatDate = (date: string | Date | null) => {
 };
 
 const deleteZone = async (zone: any) => {
-  if (!confirm(`¿Eliminar la zona "${zone.name}"?`)) return;
+  const ok = await confirm({
+    title: `¿Eliminar la zona "${zone.name}"?`,
+    description: 'Esta acción no se puede deshacer.',
+    confirmLabel: 'Eliminar',
+    confirmColor: 'error',
+  });
+  if (!ok) return;
   try {
     await $fetch(`/api/zones/${zone.id}`, {
       method: 'DELETE',
@@ -134,8 +167,9 @@ const deleteZone = async (zone: any) => {
     });
     selectedZone.value = null;
     refresh();
+    toast.add({ title: 'Zona eliminada', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error eliminando zona: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error eliminando zona', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   }
 };
 </script>

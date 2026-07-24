@@ -43,10 +43,15 @@
         </button>
       </div>
 
-      <div v-if="pending" class="flex items-center justify-center py-20">
-        <div class="flex flex-col items-center gap-4">
-          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-          <span class="text-slate-500 font-medium">Cargando rutas...</span>
+      <div v-if="pending" class="space-y-3">
+        <div v-for="i in 5" :key="i" class="bg-white border border-gray-200 rounded-2xl p-4 animate-pulse">
+          <div class="flex items-center gap-4">
+            <div class="h-4 bg-slate-200 rounded w-24"></div>
+            <div class="h-4 bg-slate-200 rounded w-32"></div>
+            <div class="h-4 bg-slate-200 rounded w-20"></div>
+            <div class="h-4 bg-slate-200 rounded w-16"></div>
+            <div class="h-6 bg-slate-200 rounded-full w-20"></div>
+          </div>
         </div>
       </div>
 
@@ -160,8 +165,18 @@
                       <div class="bg-white rounded-xl border border-gray-200 p-4">
                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Agregar Parada</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <input v-model="newStop.clientName" type="text" placeholder="Nombre del cliente" class="px-3 py-2 rounded-lg bg-slate-50 border border-gray-200 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500">
-                          <input v-model="newStop.address" type="text" placeholder="Dirección" class="px-3 py-2 rounded-lg bg-slate-50 border border-gray-200 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500">
+                          <div>
+                            <input v-model="newStop.clientName" type="text" placeholder="Nombre del cliente"
+                              class="w-full px-3 py-2 rounded-lg bg-slate-50 border text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
+                              :class="stopErrors.clientName ? 'border-red-300' : 'border-gray-200'" />
+                            <p v-if="stopErrors.clientName" class="text-[10px] text-red-500 mt-1">{{ stopErrors.clientName }}</p>
+                          </div>
+                          <div>
+                            <input v-model="newStop.address" type="text" placeholder="Dirección"
+                              class="w-full px-3 py-2 rounded-lg bg-slate-50 border text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
+                              :class="stopErrors.address ? 'border-red-300' : 'border-gray-200'" />
+                            <p v-if="stopErrors.address" class="text-[10px] text-red-500 mt-1">{{ stopErrors.address }}</p>
+                          </div>
                           <input v-model.number="newStop.lat" type="number" step="0.0001" placeholder="Latitud" class="px-3 py-2 rounded-lg bg-slate-50 border border-gray-200 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500">
                           <input v-model.number="newStop.lng" type="number" step="0.0001" placeholder="Longitud" class="px-3 py-2 rounded-lg bg-slate-50 border border-gray-200 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500">
                           <input v-model="newStop.timeWindowStart" type="time" class="px-3 py-2 rounded-lg bg-slate-50 border border-gray-200 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
@@ -204,18 +219,22 @@
         <form @submit.prevent="createRoute" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Conductor</label>
-            <select v-model="newRoute.driverId" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <select v-model="newRoute.driverId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              :class="routeErrors.driverId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Seleccionar conductor...</option>
               <option v-for="d in availableDrivers" :key="d.id" :value="d.id">{{ d.vehiclePlate }} ({{ d.status }})</option>
             </select>
+            <p v-if="routeErrors.driverId" class="text-xs text-red-500 mt-1">{{ routeErrors.driverId }}</p>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Zona</label>
-            <select v-model="newRoute.zoneId" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <select v-model="newRoute.zoneId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              :class="routeErrors.zoneId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Seleccionar zona...</option>
               <option v-for="z in zonesList" :key="z.id" :value="z.id">{{ z.name }}</option>
             </select>
+            <p v-if="routeErrors.zoneId" class="text-xs text-red-500 mt-1">{{ routeErrors.zoneId }}</p>
           </div>
 
           <div>
@@ -260,18 +279,22 @@
         <form @submit.prevent="saveEdit" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Conductor</label>
-            <select v-model="editForm.driverId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <select v-model="editForm.driverId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              :class="routeErrors.driverId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Sin conductor</option>
               <option v-for="d in availableDrivers" :key="d.id" :value="d.id">{{ d.vehiclePlate }} ({{ d.status }})</option>
             </select>
+            <p v-if="routeErrors.driverId" class="text-xs text-red-500 mt-1">{{ routeErrors.driverId }}</p>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Zona</label>
-            <select v-model="editForm.zoneId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <select v-model="editForm.zoneId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              :class="routeErrors.zoneId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Sin zona</option>
               <option v-for="z in zonesList" :key="z.id" :value="z.id">{{ z.name }}</option>
             </select>
+            <p v-if="routeErrors.zoneId" class="text-xs text-red-500 mt-1">{{ routeErrors.zoneId }}</p>
           </div>
 
           <div>
@@ -311,6 +334,28 @@
         </form>
       </div>
     </div>
+
+    <div v-if="confirmOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="confirmOnCancel"></div>
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+        <h2 class="text-lg font-bold text-slate-800">{{ confirmOpts.title }}</h2>
+        <p v-if="confirmOpts.description" class="text-sm text-slate-500">{{ confirmOpts.description }}</p>
+        <div class="flex gap-3 pt-2">
+          <button @click="confirmOnCancel" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+            {{ confirmOpts.cancelLabel }}
+          </button>
+          <button @click="confirmOnConfirm" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
+            :class="{
+              'bg-red-600 hover:bg-red-500 shadow-red-500/20': confirmOpts.confirmColor === 'error',
+              'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/20': confirmOpts.confirmColor === 'primary',
+              'bg-amber-600 hover:bg-amber-500 shadow-amber-500/20': confirmOpts.confirmColor === 'warning',
+              'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20': confirmOpts.confirmColor === 'success',
+            }">
+            {{ confirmOpts.confirmLabel }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -319,6 +364,9 @@ import { ref, computed, onMounted } from 'vue';
 
 useHead({ title: 'Gestión de Rutas | GeoLogistics' });
 
+const toast = useToast();
+const { isOpen: confirmOpen, options: confirmOpts, confirm, onConfirm: confirmOnConfirm, onCancel: confirmOnCancel } = useConfirm();
+
 const statusFilter = ref('');
 const dateFilter = ref(new Date().toISOString().split('T')[0]);
 const expandedRoute = ref<string | null>(null);
@@ -326,6 +374,7 @@ const showCreateModal = ref(false);
 const creating = ref(false);
 
 const { data, pending, refresh } = await useFetch('/api/routes', {
+  headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
   query: computed(() => ({
     status: statusFilter.value || undefined,
     date: dateFilter.value || undefined,
@@ -334,10 +383,14 @@ const { data, pending, refresh } = await useFetch('/api/routes', {
 
 const routesList = computed(() => data.value?.data ?? []);
 
-const { data: driversData } = await useFetch('/api/drivers');
+const { data: driversData } = await useFetch('/api/drivers', {
+  headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+});
 const availableDrivers = computed(() => driversData.value?.data ?? []);
 
-const { data: zonesData } = await useFetch('/api/dashboard');
+const { data: zonesData } = await useFetch('/api/dashboard', {
+  headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+});
 const zonesList = computed(() => zonesData.value?.data?.zones ?? []);
 
 const routeStops = ref<any[]>([]);
@@ -412,10 +465,12 @@ const onDrop = async (routeId: string, e?: DragEvent) => {
   try {
     await $fetch(`/api/routes/${routeId}/reorder`, {
       method: 'PUT',
+      headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
       body: { stopIds },
     });
+    toast.add({ title: 'Paradas reordenadas', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error reordenando: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error reordenando', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
     const res = await $fetch(`/api/routes/${routeId}/stops`, {
       headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
     });
@@ -455,9 +510,17 @@ const newStop = ref({
   timeWindowEnd: '',
 });
 const addingStop = ref(false);
+const stopErrors = ref<Record<string, string>>({});
+
+const validateStop = (): boolean => {
+  stopErrors.value = {};
+  if (!newStop.value.clientName.trim()) stopErrors.value.clientName = 'Requerido';
+  if (!newStop.value.address.trim()) stopErrors.value.address = 'Requerido';
+  return Object.keys(stopErrors.value).length === 0;
+};
 
 const addStop = async (routeId: string) => {
-  if (!newStop.value.clientName || !newStop.value.address) return;
+  if (!validateStop()) return;
   addingStop.value = true;
   try {
     await $fetch(`/api/routes/${routeId}/stops`, {
@@ -477,8 +540,9 @@ const addStop = async (routeId: string) => {
     });
     routeStops.value = res.data || [];
     newStop.value = { clientName: '', address: '', lat: undefined, lng: undefined, timeWindowStart: '', timeWindowEnd: '' };
+    toast.add({ title: 'Parada agregada', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error agregando parada: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error agregando parada', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   } finally {
     addingStop.value = false;
   }
@@ -491,12 +555,23 @@ const newRoute = ref({
   optimizedDistanceKm: undefined as number | undefined,
   estimatedDurationMins: undefined as number | undefined,
 });
+const routeErrors = ref<Record<string, string>>({});
+
+const validateRoute = (data: { driverId: string; zoneId: string; date?: string }): boolean => {
+  routeErrors.value = {};
+  if (!data.driverId) routeErrors.value.driverId = 'Selecciona un conductor';
+  if (!data.zoneId) routeErrors.value.zoneId = 'Selecciona una zona';
+  if (!data.date) routeErrors.value.date = 'La fecha es requerida';
+  return Object.keys(routeErrors.value).length === 0;
+};
 
 const createRoute = async () => {
+  if (!validateRoute(newRoute.value)) return;
   creating.value = true;
   try {
     await $fetch('/api/routes', {
       method: 'POST',
+      headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
       body: {
         ...newRoute.value,
         optimizedDistanceKm: newRoute.value.optimizedDistanceKm || null,
@@ -512,8 +587,9 @@ const createRoute = async () => {
       optimizedDistanceKm: undefined,
       estimatedDurationMins: undefined,
     };
+    toast.add({ title: 'Ruta creada', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error creando ruta: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error creando ruta', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   } finally {
     creating.value = false;
   }
@@ -524,7 +600,13 @@ const fetchRoutes = () => {
 };
 
 const despacharRoute = async (routeId: string) => {
-  if (!confirm('¿Despachar esta ruta? El conductor será notificado.')) return;
+  const ok = await confirm({
+    title: '¿Despachar esta ruta?',
+    description: 'El conductor será notificado.',
+    confirmLabel: 'Despachar',
+    confirmColor: 'primary',
+  });
+  if (!ok) return;
   try {
     await $fetch(`/api/routes/${routeId}`, {
       method: 'PUT',
@@ -532,8 +614,9 @@ const despacharRoute = async (routeId: string) => {
       body: { status: 'despachada' }
     });
     refresh();
+    toast.add({ title: 'Ruta despachada', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error despachando: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error despachando', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   }
 };
 
@@ -559,11 +642,13 @@ const editRoute = (route: any) => {
     estimatedDurationMins: route.estimatedDurationMins || undefined,
     status: route.status || 'pendiente',
   };
+  routeErrors.value = {};
   showEditModal.value = true;
 };
 
 const saveEdit = async () => {
   if (!editingRoute.value) return;
+  if (!validateRoute(editForm.value)) return;
   savingEdit.value = true;
   try {
     await $fetch(`/api/routes/${editingRoute.value.id}`, {
@@ -574,23 +659,31 @@ const saveEdit = async () => {
     showEditModal.value = false;
     editingRoute.value = null;
     refresh();
+    toast.add({ title: 'Ruta actualizada', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error guardando: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error guardando', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   } finally {
     savingEdit.value = false;
   }
 };
 
 const deleteRoute = async (routeId: string) => {
-  if (!confirm('¿Eliminar esta ruta?')) return;
+  const ok = await confirm({
+    title: '¿Eliminar esta ruta?',
+    description: 'Esta acción no se puede deshacer.',
+    confirmLabel: 'Eliminar',
+    confirmColor: 'error',
+  });
+  if (!ok) return;
   try {
     await $fetch(`/api/routes/${routeId}`, {
       method: 'DELETE',
       headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
     });
     refresh();
+    toast.add({ title: 'Ruta eliminada', color: 'success', icon: 'i-lucide-check-circle' });
   } catch (e: any) {
-    alert('Error eliminando: ' + (e?.data?.statusMessage || e.message));
+    toast.add({ title: 'Error eliminando', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
   }
 };
 

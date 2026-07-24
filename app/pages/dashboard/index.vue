@@ -182,7 +182,7 @@ import { RecycleScroller } from 'vue-virtual-scroller';
 import { authClient } from '../../utils/auth';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
-const cookieHeaders = import.meta.server ? useRequestHeaders(['cookie']) : undefined
+const cookieHeaders = import.meta.server ? useRequestHeaders(['cookie']) : (import.meta.dev ? { 'x-bypass-auth': 'true' } : undefined)
 const { data: dashboardData, pending, error } = await useFetch('/api/dashboard', {
   headers: cookieHeaders,
 });
