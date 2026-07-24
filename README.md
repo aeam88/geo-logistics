@@ -14,7 +14,7 @@ Una plataforma SaaS de logística y optimización de rutas B2B diseñada para co
 | **Tiempo Real** | Server-Sent Events (SSE) nativos en Nitro |
 | **PWA** | Service Worker + IndexedDB + Background Sync |
 | **Push Notifications** | Web Push API + VAPID keys |
-| **UI** | Tailwind CSS v4 + @nuxt/ui |
+| **UI** | Tailwind CSS v4 + @nuxt/ui (Toast, modals) |
 
 ---
 
@@ -30,7 +30,7 @@ SSE unidireccional para transmitir GPS de conductores a despachadores. Bus de ev
 Polígonos de reparto serializados como GeoJSON en campos `text`. Fórmula de Haversine inyectada en Drizzle para búsquedas de proximidad.
 
 ### PWA Offline-First
-Service Worker con cache strategies (network-first para API, cache-first para assets). IndexedDB para almacenar ruta del día. Cola de sincronización para GPS y entregas offline.
+Service Worker con cache strategies (network-first para API, cache-first para assets). IndexedDB para almacenar ruta del día y paradas. Cola de sincronización automática para GPS y entregas offline con flush al reconectar.
 
 ---
 
@@ -46,9 +46,14 @@ Service Worker con cache strategies (network-first para API, cache-first para as
 │   ├── composables/
 │   │   ├── useGpsTracker.ts            # GPS con throttling (50m / 10s)
 │   │   ├── useGpsBatcher.ts            # Batch de historial GPS cada 30s
-│   │   └── usePushNotifications.ts     # Suscripción a push notifications
+│   │   ├── usePushNotifications.ts     # Suscripción a push notifications
+│   │   ├── useConfirm.ts               # Modal de confirmación reutilizable
+│   │   ├── usePersistedRef.ts          # Ref sincronizado con localStorage
+│   │   └── useClickGuard.ts            # Anti double-click en botones de acción
 │   ├── middleware/
-│   │   └── auth.global.ts              # RBAC: redirige según rol
+│   │   └── auth.global.ts              # RBAC: cookie check + redirect por rol
+│   ├── plugins/
+│   │   └── session-refresh.client.ts   # Polling de sesión cada 5 min
 │   ├── pages/
 │   │   ├── login.vue / register.vue    # Autenticación con Better Auth
 │   │   ├── dashboard/
@@ -57,9 +62,10 @@ Service Worker con cache strategies (network-first para API, cache-first para as
 │   │   │   ├── zones/index.vue         # Gestión de zonas con Leaflet Draw
 │   │   │   ├── admin/index.vue         # Panel admin (usuarios, organizaciones)
 │   │   │   └── analytics/index.vue     # Métricas y reportes
-│   │   └── chofer/index.vue            # App del conductor (PWA offline)
+│   │   └── chofer/index.vue            # App del conductor (PWA offline, ssr: false)
 │   └── utils/
 │       ├── offlineStorage.ts           # IndexedDB para modo offline
+│       ├── sessionRefresh.ts           # Refresh de sesión + fetchWithRetry
 │       └── auth.ts                     # Cliente Better Auth
 ├── server/
 │   ├── api/
@@ -83,7 +89,8 @@ Service Worker con cache strategies (network-first para API, cache-first para as
 │   │   ├── stops/
 │   │   │   ├── viewport.get.ts         # Paradas visibles en el mapa (lazy load)
 │   │   │   ├── [id]/deliver.post.ts    # Marcar entrega + evidencia
-│   │   │   └── [id]/fail.post.ts       # Marcar falla
+│   │   │   ├── [id]/fail.post.ts       # Marcar falla
+│   │   │   └── [id]/evidence.get.ts    # Obtener evidencia de una parada
 │   │   ├── zones/                      # CRUD de zonas GeoJSON
 │   │   ├── orders/                     # CRUD de órdenes de pedido
 │   │   ├── clients/                    # CRUD de clientes B2B
@@ -116,8 +123,8 @@ Service Worker con cache strategies (network-first para API, cache-first para as
 │       └── db.ts                      # Cliente libSQL
 ├── public/
 │   ├── sw.js                          # Service Worker (offline + cache + push)
-│   ├── manifest.json                  # PWA manifest
-│   └── icon-*.svg                     # Iconos PWA
+│   ├── manifest.json                  # PWA manifest (theme: indigo)
+│   └── icon*.svg                      # Favicon e iconos PWA (SVG, indigo accent)
 ├── tests/
 │   └── telemetry.test.ts             # Tests del bus de telemetría
 └── scripts/
@@ -208,10 +215,16 @@ VAPID_PRIVATE_KEY=tu_private_key
 ### Panel del Despachador (`/dashboard`)
 - Mapa interactivo con clustering de marcadores
 - Lazy load de paradas por viewport
-- Gestión de rutas con drag & drop
+- Gestión de rutas con drag & drop y validación client-side
 - Creación de zonas con Leaflet Draw
 - Panel de admin multi-tenant
 - Analytics y exportación CSV
+- Toast notifications (Nuxt UI) en lugar de alert() nativos
+- Modales de confirmación custom para acciones destructivas
+- Filtros persistentes en localStorage (estado, fecha, búsqueda)
+- Skeleton loaders para carga de datos
+- Refresh automático de sesión (polling cada 5 min + retry en 401)
+- Evidence viewer con lazy loading de fotos de entrega
 
 ### App del Conductor (`/chofer`)
 - PWA instalable (funciona sin internet)
@@ -220,12 +233,23 @@ VAPID_PRIVATE_KEY=tu_private_key
 - GPS con throttling (50m / 10s)
 - Batch de historial GPS cada 30s
 - Modo offline con sincronización automática
+- Cache de paradas en IndexedDB con indicador visual
+- Flush de cola offline al reconectar
 - Push notifications
+- Layout reordenado: Nav → Barra progreso → Paradas
 
 ### Multi-tenant
 - Organizaciones aisladas
 - Invitaciones con token
 - Roles: admin, dispatcher, driver, fleet_manager, viewer
+
+### UX
+- Toast notifications no intrusivas (error, success, info)
+- Confirmación custom para eliminar/despachar
+- Skeleton loaders para tablas
+- Anti double-click en botones de acción
+- Filtros persistentes entre navegaciones
+- Indicador offline/online con badge animado
 
 ---
 
@@ -239,4 +263,5 @@ VAPID_PRIVATE_KEY=tu_private_key
 | **F4** | ✅ | Multi-tenant: Organizaciones, invitaciones, admin panel |
 | **F5** | ✅ | PWA: Offline, IndexedDB, background sync, push notifications |
 | **F6** | ✅ | Analytics: Métricas de flota, exportación CSV |
+| **F6.1** | ✅ | UX: Toast, confirm modal, validación, skeleton, filtros persistentes, evidence lazy load, session refresh, offline cache, click guard |
 | **F7** | ⏳ | DevOps: Docker, tests E2E, deploy, monitoreo |
