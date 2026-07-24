@@ -171,7 +171,7 @@ useHead({ title: 'Admin Panel | GeoLogistics' });
 
 const toast = useToast();
 
-const activeTab = ref<'users' | 'invitations' | 'settings'>('users');
+const activeTab = usePersistedRef<'users' | 'invitations' | 'settings'>('admin:activeTab', 'users');
 const tabs = [
   { id: 'users' as const, label: 'Usuarios' },
   { id: 'invitations' as const, label: 'Invitaciones' },

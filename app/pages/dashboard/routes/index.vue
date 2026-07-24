@@ -367,8 +367,8 @@ useHead({ title: 'Gestión de Rutas | GeoLogistics' });
 const toast = useToast();
 const { isOpen: confirmOpen, options: confirmOpts, confirm, onConfirm: confirmOnConfirm, onCancel: confirmOnCancel } = useConfirm();
 
-const statusFilter = ref('');
-const dateFilter = ref(new Date().toISOString().split('T')[0]);
+const statusFilter = usePersistedRef<string>('routes:statusFilter', '');
+const dateFilter = usePersistedRef<string>('routes:dateFilter', new Date().toISOString().slice(0, 10));
 const expandedRoute = ref<string | null>(null);
 const showCreateModal = ref(false);
 const creating = ref(false);

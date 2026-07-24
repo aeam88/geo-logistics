@@ -134,7 +134,7 @@ useHead({ title: 'Gestión de Zonas | GeoLogistics' });
 const toast = useToast();
 const { isOpen: confirmOpen, options: confirmOpts, confirm, onConfirm: confirmOnConfirm, onCancel: confirmOnCancel } = useConfirm();
 
-const activeTab = ref<'list' | 'create'>('list');
+const activeTab = usePersistedRef<'list' | 'create'>('zones:activeTab', 'list');
 const selectedZone = ref<any>(null);
 
 const { data, pending, refresh } = await useFetch('/api/dashboard', {
