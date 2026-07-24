@@ -115,7 +115,7 @@
 
     <div v-if="showInviteModal" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showInviteModal = false"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6 space-y-4">
         <h3 class="text-lg font-bold text-slate-800">Invitar Usuario</h3>
         <div>
           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Email</label>
@@ -142,7 +142,7 @@
 
     <div v-if="showCreateOrgModal" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showCreateOrgModal = false"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6 space-y-4">
         <h3 class="text-lg font-bold text-slate-800">Crear Organización</h3>
         <div>
           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Nombre</label>

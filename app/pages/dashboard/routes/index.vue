@@ -33,18 +33,18 @@
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha</label>
             <input v-model="dateFilter" type="date" class="bg-transparent text-sm font-medium text-slate-700 outline-none" />
           </div>
-          <button @click="fetchRoutes" class="px-4 py-2.5 bg-white border border-gray-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-gray-50 shadow-sm transition-all">
+          <button @click="fetchRoutes" class="px-4 py-2.5 bg-white border border-gray-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-gray-50 shadow-sm transition-all">
             Filtrar
           </button>
         </div>
-        <button @click="showCreateModal = true" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-2">
+        <button @click="showCreateModal = true" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
           Nueva Ruta
         </button>
       </div>
 
       <div v-if="pending" class="space-y-3">
-        <div v-for="i in 5" :key="i" class="bg-white border border-gray-200 rounded-2xl p-4 animate-pulse">
+        <div v-for="i in 5" :key="i" class="bg-white border border-gray-200 rounded-xl p-4 animate-pulse">
           <div class="flex items-center gap-4">
             <div class="h-4 bg-slate-200 rounded w-24"></div>
             <div class="h-4 bg-slate-200 rounded w-32"></div>
@@ -225,7 +225,7 @@
 
     <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showCreateModal = false"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-5">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 space-y-5">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-slate-800">Crear Nueva Ruta</h2>
           <button @click="showCreateModal = false" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
@@ -236,7 +236,7 @@
         <form @submit.prevent="createRoute" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Conductor</label>
-            <select v-model="newRoute.driverId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            <select v-model="newRoute.driverId" class="w-full px-4 py-3 rounded-lg bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               :class="routeErrors.driverId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Seleccionar conductor...</option>
               <option v-for="d in availableDrivers" :key="d.id" :value="d.id">{{ d.vehiclePlate }} ({{ d.status }})</option>
@@ -246,7 +246,7 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Zona</label>
-            <select v-model="newRoute.zoneId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            <select v-model="newRoute.zoneId" class="w-full px-4 py-3 rounded-lg bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               :class="routeErrors.zoneId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Seleccionar zona...</option>
               <option v-for="z in zonesList" :key="z.id" :value="z.id">{{ z.name }}</option>
@@ -256,25 +256,25 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Fecha</label>
-            <input v-model="newRoute.date" type="date" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            <input v-model="newRoute.date" type="date" required class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Distancia Est. (km)</label>
-              <input v-model.number="newRoute.optimizedDistanceKm" type="number" step="0.1" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+              <input v-model.number="newRoute.optimizedDistanceKm" type="number" step="0.1" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Duración Est. (min)</label>
-              <input v-model.number="newRoute.estimatedDurationMins" type="number" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+              <input v-model.number="newRoute.estimatedDurationMins" type="number" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             </div>
           </div>
 
           <div class="flex gap-3 pt-2">
-            <button type="button" @click="showCreateModal = false" class="flex-1 py-3 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+            <button type="button" @click="showCreateModal = false" class="flex-1 py-3 rounded-lg font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
               Cancelar
             </button>
-            <button type="submit" :disabled="creating" class="flex-1 py-3 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="submit" :disabled="creating" class="flex-1 py-3 rounded-lg font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               <div v-if="creating" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               {{ creating ? 'Creando...' : 'Crear Ruta' }}
             </button>
@@ -285,7 +285,7 @@
 
     <div v-if="showEditModal && editingRoute" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showEditModal = false"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-5">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 space-y-5">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-slate-800">Editar Ruta</h2>
           <button @click="showEditModal = false" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
@@ -296,7 +296,7 @@
         <form @submit.prevent="saveEdit" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Conductor</label>
-            <select v-model="editForm.driverId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            <select v-model="editForm.driverId" class="w-full px-4 py-3 rounded-lg bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               :class="routeErrors.driverId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Sin conductor</option>
               <option v-for="d in availableDrivers" :key="d.id" :value="d.id">{{ d.vehiclePlate }} ({{ d.status }})</option>
@@ -306,7 +306,7 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Zona</label>
-            <select v-model="editForm.zoneId" class="w-full px-4 py-3 rounded-xl bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            <select v-model="editForm.zoneId" class="w-full px-4 py-3 rounded-lg bg-slate-50 border text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               :class="routeErrors.zoneId ? 'border-red-300' : 'border-gray-200'">
               <option value="">Sin zona</option>
               <option v-for="z in zonesList" :key="z.id" :value="z.id">{{ z.name }}</option>
@@ -316,23 +316,23 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Fecha</label>
-            <input v-model="editForm.date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            <input v-model="editForm.date" type="date" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Distancia Est. (km)</label>
-              <input v-model.number="editForm.optimizedDistanceKm" type="number" step="0.1" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+              <input v-model.number="editForm.optimizedDistanceKm" type="number" step="0.1" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Duración Est. (min)</label>
-              <input v-model.number="editForm.estimatedDurationMins" type="number" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+              <input v-model.number="editForm.estimatedDurationMins" type="number" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Estado</label>
-            <select v-model="editForm.status" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <select v-model="editForm.status" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-gray-200 text-slate-800 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
               <option value="pendiente">Pendiente</option>
               <option value="despachada">Despachada</option>
               <option value="completada">Completada</option>
@@ -340,10 +340,10 @@
           </div>
 
           <div class="flex gap-3 pt-2">
-            <button type="button" @click="showEditModal = false" class="flex-1 py-3 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+            <button type="button" @click="showEditModal = false" class="flex-1 py-3 rounded-lg font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
               Cancelar
             </button>
-            <button type="submit" :disabled="savingEdit" class="flex-1 py-3 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="submit" :disabled="savingEdit" class="flex-1 py-3 rounded-lg font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               <div v-if="savingEdit" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               {{ savingEdit ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
@@ -354,14 +354,14 @@
 
     <div v-if="confirmOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="confirmOnCancel"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 space-y-4">
         <h2 class="text-lg font-bold text-slate-800">{{ confirmOpts.title }}</h2>
         <p v-if="confirmOpts.description" class="text-sm text-slate-500">{{ confirmOpts.description }}</p>
         <div class="flex gap-3 pt-2">
-          <button @click="confirmOnCancel" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+          <button @click="confirmOnCancel" class="flex-1 py-2.5 rounded-lg font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
             {{ confirmOpts.cancelLabel }}
           </button>
-          <button @click="confirmOnConfirm" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
+          <button @click="confirmOnConfirm" class="flex-1 py-2.5 rounded-lg font-bold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
             :class="{
               'bg-red-600 hover:bg-red-500 shadow-red-500/20': confirmOpts.confirmColor === 'error',
               'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/20': confirmOpts.confirmColor === 'primary',

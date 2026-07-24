@@ -196,19 +196,19 @@
 
             <div>
               <label class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-1.5 block">Nombre de quien recibe (opcional)</label>
-              <input v-model="recipientName" type="text" placeholder="Ej: Juan Pérez" class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white text-sm placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500" />
+              <input v-model="recipientName" type="text" placeholder="Ej: Juan Pérez" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white text-sm placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
 
             <div>
               <label class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-1.5 block">Notas adicionales</label>
-              <textarea v-model="deliveryNotes" rows="2" placeholder="Comentarios sobre la entrega..." class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white text-sm placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+              <textarea v-model="deliveryNotes" rows="2" placeholder="Comentarios sobre la entrega..." class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white text-sm placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-3 pt-2">
               <button
                 @click="markAsFailed"
                 :disabled="acting"
-                class="py-4 rounded-2xl font-bold text-sm bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                class="py-4 rounded-lg font-bold text-sm bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 Fallido
@@ -216,7 +216,7 @@
               <button
                 @click="markAsDelivered"
                 :disabled="acting"
-                class="py-4 rounded-2xl font-bold text-sm bg-emerald-500 text-slate-900 hover:bg-emerald-400 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                class="py-4 rounded-lg font-bold text-sm bg-emerald-500 text-slate-900 hover:bg-emerald-400 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
               >
                 <svg v-if="!acting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 <div v-else class="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-900"></div>

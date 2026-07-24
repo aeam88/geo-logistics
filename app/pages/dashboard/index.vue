@@ -158,14 +158,14 @@
         </ClientOnly>
 
         <div class="absolute bottom-6 right-6 z-1000 flex flex-col gap-3">
-           <button class="bg-white p-3 rounded-xl shadow-lg border border-gray-200 text-slate-700 hover:bg-gray-50 active:scale-95 transition-all focus:outline-none">
+           <button class="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-slate-700 hover:bg-gray-50 active:scale-95 transition-all focus:outline-none">
              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
            </button>
-           <button class="bg-white p-3 rounded-xl shadow-lg border border-gray-200 text-indigo-600 hover:bg-gray-50 active:scale-95 transition-all focus:outline-none">
+           <button class="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-indigo-600 hover:bg-gray-50 active:scale-95 transition-all focus:outline-none">
              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
            </button>
            <div class="h-4"></div>
-           <button class="bg-white p-3 rounded-xl shadow-lg border border-gray-200 </template>
+           <button class="bg-white p-3 rounded-lg shadow-lg border border-gray-200 </template>
  hover:bg-gray-50 active:scale-95 transition-all focus:outline-none text-indigo-600" title="Centrar mapa">
              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
            </button>
