@@ -180,6 +180,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { RecycleScroller } from 'vue-virtual-scroller';
 import { authClient } from '../../utils/auth';
+import { fetchWithRetry } from '../../utils/sessionRefresh';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 const cookieHeaders = import.meta.server ? useRequestHeaders(['cookie']) : (import.meta.dev ? { 'x-bypass-auth': 'true' } : undefined)
@@ -228,7 +229,7 @@ const filteredDrivers = computed(() => {
 
 const fetchDrivers = async (page: number, append = false) => {
   try {
-    const res = await $fetch('/api/drivers/paginated', {
+    const res = await fetchWithRetry<any>('/api/drivers/paginated', {
       params: { page, limit: driverLimit },
       headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
     });
