@@ -111,3 +111,13 @@ export async function clearOfflineData() {
   });
   console.log("[Offline] All data cleared");
 }
+
+export async function getOfflineQueueCount(): Promise<number> {
+  const db = await openDB();
+  return new Promise<number>((resolve, reject) => {
+    const tx = db.transaction("offlineQueue", "readonly");
+    const req = tx.objectStore("offlineQueue").count();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}

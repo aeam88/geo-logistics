@@ -1,4 +1,5 @@
 <template>
+  <ClientOnly>
   <div class="min-h-screen bg-slate-900 text-white font-sans flex flex-col">
     <header class="px-4 py-2.5 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-10 flex justify-between items-center">
       <div>
@@ -8,9 +9,14 @@
         <p class="text-slate-400 text-[10px] mt-0.5">Patente: <span class="font-mono text-slate-200">{{ vehiclePlate }}</span></p>
       </div>
       <div class="flex items-center gap-2">
-        <span v-if="isOffline" class="text-[9px] text-rose-400 bg-rose-400/10 px-1.5 py-0.5 rounded font-medium animate-pulse">⚡ Offline</span>
-        <span v-else-if="pendingSync > 0" class="text-[9px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded font-medium">🔄 {{ pendingSync }}</span>
-        <span v-else class="text-[9px] text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded font-medium">✓ Online</span>
+        <ClientOnly>
+          <span v-if="isOffline" class="text-[9px] text-rose-400 bg-rose-400/10 px-1.5 py-0.5 rounded font-medium animate-pulse">⚡ Offline</span>
+          <span v-else-if="pendingSync > 0" class="text-[9px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded font-medium">🔄 {{ pendingSync }}</span>
+          <span v-else class="text-[9px] text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded font-medium">✓ Online</span>
+          <template #fallback>
+            <span class="text-[9px] text-slate-400 bg-slate-400/10 px-1.5 py-0.5 rounded font-medium">···</span>
+          </template>
+        </ClientOnly>
         <span v-if="pushSupported && pushSubscribed" class="text-[9px] text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded font-medium">🔔</span>
         <span v-else-if="pushSupported" class="text-[9px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded font-medium cursor-pointer" @click="subscribePush">🔔 Off</span>
         <button @click="handleLogout" class="text-[10px] text-slate-400 hover:text-red-400 transition-colors font-semibold px-2 py-1">
@@ -29,15 +35,12 @@
       </div>
     </div>
 
-    <div v-else-if="!routeData" class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-      <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4 border border-slate-700">
-        <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.447-.894L15 7m0 13V7"/></svg>
+    <template v-else>
+      <div v-if="isFromCache && routeData" class="px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-[11px] font-medium flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        Datos guardados localmente — Se sincronizarán cuando haya conexión
       </div>
-      <h2 class="text-xl font-bold text-slate-300 mb-1">Sin ruta asignada</h2>
-      <p class="text-sm text-slate-500">No tienes una ruta programada para hoy. Descansa o contacta a tu despachador.</p>
-    </div>
 
-    <main v-else class="flex-1 flex flex-col">
       <div class="p-4 bg-slate-800/50 border-b border-slate-800">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
@@ -45,7 +48,7 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
             <div>
-              <div class="text-sm font-bold text-white">Ruta {{ routeData.route.status === 'despachada' ? 'Activa' : 'Pendiente' }}</div>
+              <div class="text-sm font-bold text-white">Ruta {{ routeData?.route?.status === 'despachada' ? 'Activa' : 'Pendiente' }}</div>
               <div class="text-[10px] text-slate-400">{{ completedStops }}/{{ stopsList.length }} entregas</div>
             </div>
           </div>
@@ -54,13 +57,13 @@
             <div class="text-[10px] text-slate-400">completado</div>
           </div>
         </div>
-        
+
         <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
           <div class="h-full bg-linear-to-r from-emerald-500 to-indigo-500 rounded-full transition-all duration-700" :style="{ width: progressPercent + '%' }"></div>
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 space-y-3">
+      <div v-if="stopsList.length > 0" class="flex-1 overflow-y-auto p-4 space-y-3">
         <div
           v-for="stop in stopsList"
           :key="stop.id"
@@ -111,7 +114,15 @@
           </div>
         </div>
       </div>
-    </main>
+
+      <div v-else class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4 border border-slate-700">
+          <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.447-.894L15 7m0 13V7"/></svg>
+        </div>
+        <h2 class="text-xl font-bold text-slate-300 mb-1">Sin paradas</h2>
+        <p class="text-sm text-slate-500">No hay paradas asignadas a esta ruta.</p>
+      </div>
+    </template>
 
     <div v-if="selectedStop" class="fixed inset-0 z-50 flex flex-col">
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="selectedStop = null"></div>
@@ -232,36 +243,46 @@
       </div>
     </div>
   </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
+definePageMeta({ ssr: false });
+
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useGpsTracker } from '../../composables/useGpsTracker';
 import { authClient } from '../../utils/auth';
-import { saveRouteOffline, getRouteOffline, addToOfflineQueue, flushOfflineQueue, clearOfflineData } from '../../utils/offlineStorage';
+import { saveRouteOffline, getRouteOffline, addToOfflineQueue, flushOfflineQueue, clearOfflineData, getOfflineQueueCount } from '../../utils/offlineStorage';
 
 const session = authClient.useSession();
 const vehiclePlate = ref('---');
-const isOffline = ref(!navigator.onLine);
+const isOffline = ref(import.meta.server ? false : !navigator.onLine);
 const pendingSync = ref(0);
 
 const { data, pending, error, refresh } = await useFetch('/api/drivers/my-route', {
   headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
 });
 const routeData = ref<any>(null);
+const isFromCache = ref(false);
 const stopsList = computed(() => routeData.value?.stops || []);
 
 watchEffect(async () => {
+  if (import.meta.server) return;
   if (data.value?.data) {
     routeData.value = data.value.data;
+    isFromCache.value = false;
     if (data.value.data.route) {
       await saveRouteOffline(data.value.data.route, data.value.data.stops || []);
     }
-  } else if (!pending.value && (error.value || !navigator.onLine)) {
-    const offlineData = await getRouteOffline();
-    if (offlineData) {
-      routeData.value = offlineData;
-      console.log('[Chofer] Loaded route from offline storage');
+  } else if (!pending.value) {
+    if (error.value || (import.meta.client && !navigator.onLine) || !data.value) {
+      if (import.meta.server) return;
+      const offlineData = await getRouteOffline();
+      if (offlineData) {
+        routeData.value = offlineData;
+        isFromCache.value = true;
+        console.log('[Chofer] Loaded route from offline storage');
+      }
     }
   }
 });
@@ -286,6 +307,8 @@ const handleOnline = async () => {
   isOffline.value = false;
   console.log('[Chofer] Back online, syncing...');
   await syncOfflineQueue();
+  pendingSync.value = await getOfflineQueueCount();
+  await refresh();
 };
 
 const handleOffline = () => {
@@ -433,6 +456,7 @@ const markAsDelivered = async () => {
     if (idx !== -1) {
       routeData.value.stops[idx] = { ...routeData.value.stops[idx], status: 'entregado', deliveredAt: new Date().toISOString() };
     }
+    pendingSync.value = await getOfflineQueueCount();
     selectedStop.value = null;
     acting.value = false;
     return;
@@ -451,6 +475,7 @@ const markAsDelivered = async () => {
       type: 'stop_update',
       data: { stopId: selectedStop.value!.id, action: 'deliver', body: payload },
     });
+    pendingSync.value = await getOfflineQueueCount();
     selectedStop.value = null;
   } finally {
     acting.value = false;
@@ -474,6 +499,7 @@ const markAsFailed = async () => {
     if (idx !== -1) {
       routeData.value.stops[idx] = { ...routeData.value.stops[idx], status: 'fallido' };
     }
+    pendingSync.value = await getOfflineQueueCount();
     selectedStop.value = null;
     acting.value = false;
     return;
@@ -492,6 +518,7 @@ const markAsFailed = async () => {
       type: 'stop_update',
       data: { stopId: selectedStop.value!.id, action: 'fail', body: payload },
     });
+    pendingSync.value = await getOfflineQueueCount();
     selectedStop.value = null;
   } finally {
     acting.value = false;
@@ -532,4 +559,15 @@ const handleLogout = async () => {
   try { await authClient.signOut(); } catch {}
   await navigateTo('/login');
 };
+
+onMounted(async () => {
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
+  pendingSync.value = await getOfflineQueueCount();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('online', handleOnline);
+  window.removeEventListener('offline', handleOffline);
+});
 </script>
