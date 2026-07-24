@@ -197,8 +197,8 @@ const driversList = ref<Array<any>>([]);
 const driverPagination = ref({ total: 0, totalPages: 0, hasNext: false });
 const loadingMore = ref(false);
 
-const searchPlate = ref('');
-const searchZone = ref('');
+const searchPlate = usePersistedRef<string>('dashboard:searchPlate', '');
+const searchZone = usePersistedRef<string>('dashboard:searchZone', '');
 const highlightedDriverId = ref<string | null>(null);
 
 const highlightDriver = (driverId: string) => {
