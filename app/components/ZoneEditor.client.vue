@@ -62,6 +62,7 @@ const emit = defineEmits<{
   (e: 'saved', zone: { id: string; name: string }): void;
 }>();
 
+const toast = useToast();
 const mapContainer = ref<HTMLElement | null>(null);
 let map: L.Map | null = null;
 
@@ -225,7 +226,7 @@ const saveZone = async () => {
     if (saving.value) {
       console.error('[ZoneEditor] Safety timeout! Forcing reset.');
       saving.value = false;
-      alert('El servidor no respondió a tiempo. Intenta de nuevo.');
+      toast.add({ title: 'El servidor no respondió a tiempo', description: 'Intenta de nuevo.', color: 'error', icon: 'i-lucide-x-circle' });
     }
   }, 8000);
 
@@ -249,12 +250,12 @@ const saveZone = async () => {
       emit('saved', { id: res.data.id, name });
       clearDrawings();
     } else {
-      alert('Respuesta inesperada del servidor');
+      toast.add({ title: 'Respuesta inesperada del servidor', color: 'error', icon: 'i-lucide-x-circle' });
     }
   } catch (e: any) {
     console.error('[ZoneEditor] Save error:', e);
     const msg = e?.response?._data?.statusMessage || e?.data?.statusMessage || e?.message || 'Error de red o servidor no disponible';
-    alert('Error guardando zona: ' + msg);
+    toast.add({ title: 'Error guardando zona', description: msg, color: 'error', icon: 'i-lucide-x-circle' });
   } finally {
     clearTimeout(safetyTimeout);
     saving.value = false;

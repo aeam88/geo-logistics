@@ -245,7 +245,9 @@ const vehiclePlate = ref('---');
 const isOffline = ref(!navigator.onLine);
 const pendingSync = ref(0);
 
-const { data, pending, error, refresh } = await useFetch('/api/drivers/my-route');
+const { data, pending, error, refresh } = await useFetch('/api/drivers/my-route', {
+  headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+});
 const routeData = ref<any>(null);
 const stopsList = computed(() => routeData.value?.stops || []);
 
