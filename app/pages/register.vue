@@ -19,7 +19,7 @@
               v-model="name"
               type="text"
               placeholder="Tu nombre"
-              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+              class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
               :disabled="loading"
             />
           </div>
@@ -30,7 +30,7 @@
               v-model="email"
               type="email"
               placeholder="tu@email.com"
-              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+              class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
               :disabled="loading"
             />
           </div>
@@ -41,7 +41,7 @@
               v-model="password"
               type="password"
               placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+              class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
               :disabled="loading"
             />
           </div>
@@ -52,7 +52,7 @@
               v-model="vehiclePlate"
               type="text"
               placeholder="Ej: FL-99-PT"
-              class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors uppercase"
+              class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors uppercase"
               :disabled="loading"
             />
           </div>
@@ -64,7 +64,7 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full py-3 rounded-xl font-bold text-base bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            class="w-full py-3 rounded-lg font-bold text-base bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <div v-if="loading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             {{ loading ? 'Registrando...' : 'Crear Cuenta' }}

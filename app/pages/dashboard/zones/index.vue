@@ -19,14 +19,14 @@
       <div class="flex gap-2 mb-6">
         <button
           @click="activeTab = 'list'"
-          class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+          class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all"
           :class="activeTab === 'list' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'bg-white text-slate-600 border border-gray-200 hover:bg-gray-50'"
         >
           Zonas Guardadas
         </button>
         <button
           @click="activeTab = 'create'"
-          class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+          class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all"
           :class="activeTab === 'create' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'bg-white text-slate-600 border border-gray-200 hover:bg-gray-50'"
         >
           Crear Nueva Zona
@@ -45,13 +45,13 @@
           <svg class="w-16 h-16 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.447-.894L15 7m0 13V7"/></svg>
           <h3 class="text-lg font-semibold text-slate-600">No hay zonas</h3>
           <p class="text-sm mt-1">Crea tu primera zona para empezar.</p>
-          <button @click="activeTab = 'create'" class="mt-4 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-500 transition-all">
+          <button @click="activeTab = 'create'" class="mt-4 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-500 transition-all">
             Crear Zona
           </button>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="zone in zones" :key="zone.id" class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
+          <div v-for="zone in zones" :key="zone.id" class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group">
             <div class="flex items-start justify-between mb-3">
               <div>
                 <h3 class="text-base font-bold text-slate-800">{{ zone.name }}</h3>
@@ -80,7 +80,7 @@
     </main>
     <div v-if="selectedZone" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm z-9998" @click="selectedZone = null"></div>
-      <div class="relative z-9999 bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+      <div class="relative z-9999 bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div>
             <h2 class="text-lg font-bold text-slate-800">{{ selectedZone.name }}</h2>
@@ -104,14 +104,14 @@
 
     <div v-if="confirmOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="confirmOnCancel"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 space-y-4">
         <h2 class="text-lg font-bold text-slate-800">{{ confirmOpts.title }}</h2>
         <p v-if="confirmOpts.description" class="text-sm text-slate-500">{{ confirmOpts.description }}</p>
         <div class="flex gap-3 pt-2">
-          <button @click="confirmOnCancel" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+          <button @click="confirmOnCancel" class="flex-1 py-2.5 rounded-lg font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
             {{ confirmOpts.cancelLabel }}
           </button>
-          <button @click="confirmOnConfirm" class="flex-1 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
+          <button @click="confirmOnConfirm" class="flex-1 py-2.5 rounded-lg font-bold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
             :class="{
               'bg-red-600 hover:bg-red-500 shadow-red-500/20': confirmOpts.confirmColor === 'error',
               'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/20': confirmOpts.confirmColor === 'primary',
