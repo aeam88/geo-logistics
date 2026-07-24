@@ -383,6 +383,7 @@ useHead({ title: 'Gestión de Rutas | GeoLogistics' });
 
 const toast = useToast();
 const { isOpen: confirmOpen, options: confirmOpts, confirm, onConfirm: confirmOnConfirm, onCancel: confirmOnCancel } = useConfirm();
+const { locked: routeLocked, guard: guardRoute } = useClickGuard();
 
 const statusFilter = usePersistedRef<string>('routes:statusFilter', '');
 const dateFilter = usePersistedRef<string>('routes:dateFilter', new Date().toISOString().slice(0, 10));
@@ -607,32 +608,34 @@ const validateRoute = (data: { driverId: string; zoneId: string; date?: string }
 
 const createRoute = async () => {
   if (!validateRoute(newRoute.value)) return;
-  creating.value = true;
-  try {
-    await $fetch('/api/routes', {
-      method: 'POST',
-      headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
-      body: {
-        ...newRoute.value,
-        optimizedDistanceKm: newRoute.value.optimizedDistanceKm || null,
-        estimatedDurationMins: newRoute.value.estimatedDurationMins || null,
-      }
-    });
-    showCreateModal.value = false;
-    refresh();
-    newRoute.value = {
-      driverId: '',
-      zoneId: '',
-      date: new Date().toISOString().split('T')[0],
-      optimizedDistanceKm: undefined,
-      estimatedDurationMins: undefined,
-    };
-    toast.add({ title: 'Ruta creada', color: 'success', icon: 'i-lucide-check-circle' });
-  } catch (e: any) {
-    toast.add({ title: 'Error creando ruta', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
-  } finally {
-    creating.value = false;
-  }
+  await guardRoute(async () => {
+    creating.value = true;
+    try {
+      await $fetch('/api/routes', {
+        method: 'POST',
+        headers: import.meta.dev ? { 'x-bypass-auth': 'true' } : {},
+        body: {
+          ...newRoute.value,
+          optimizedDistanceKm: newRoute.value.optimizedDistanceKm || null,
+          estimatedDurationMins: newRoute.value.estimatedDurationMins || null,
+        }
+      });
+      showCreateModal.value = false;
+      refresh();
+      newRoute.value = {
+        driverId: '',
+        zoneId: '',
+        date: new Date().toISOString().split('T')[0],
+        optimizedDistanceKm: undefined,
+        estimatedDurationMins: undefined,
+      };
+      toast.add({ title: 'Ruta creada', color: 'success', icon: 'i-lucide-check-circle' });
+    } catch (e: any) {
+      toast.add({ title: 'Error creando ruta', description: e?.data?.statusMessage || e.message, color: 'error', icon: 'i-lucide-x-circle' });
+    } finally {
+      creating.value = false;
+    }
+  });
 };
 
 const fetchRoutes = () => {
