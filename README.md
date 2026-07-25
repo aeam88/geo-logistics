@@ -252,6 +252,12 @@ VAPID_PRIVATE_KEY=tu_private_key
 - Indicador offline/online con badge animado
 
 ---
+## 🎬 Video
+
+https://github.com/user-attachments/assets/eedf1c53-d2c0-4861-a513-68a80f6f180c
+
+---
+
 
 ## 🏁 Fases de Desarrollo
 
