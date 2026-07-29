@@ -193,8 +193,8 @@ const renderDrivers = () => {
     const iconAnchor: [number, number] = isHighlighted ? [18, 18] : [14, 14];
 
     const customIcon = L.divIcon({
-      className: `${colorClass} text-white rounded-full flex items-center justify-center font-bold text-xs shadow-lg border-2 transition-all duration-200`,
-      html: `<span style="font-size: ${isHighlighted ? 16 : 13}px; transform: scaleX(-1); display: inline-block;">🚚</span>`,
+      className: '',
+      html: `<div style="width:${iconSize[0]}px;height:${iconSize[1]}px;border-radius:9999px;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:1;${isHighlighted ? 'box-shadow:0 0 0 4px rgba(99,102,241,0.3);' : 'box-shadow:0 2px 8px rgba(0,0,0,0.25);'}border:2px solid white;" class="${colorClass}"><svg width="${isHighlighted ? 16 : 12}" height="${isHighlighted ? 16 : 12}" viewBox="0 0 24 24" fill="white"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>`,
       iconSize,
       iconAnchor
     });
@@ -204,7 +204,7 @@ const renderDrivers = () => {
 
     const popupHtml = `
       <div style="font-family: inherit;" class="p-1 min-w-[120px]">
-        <h4 class="font-bold text-slate-800 m-0 leading-tight">🚚 Patente: ${driver.vehiclePlate}</h4>
+        <h4 class="font-bold text-slate-800 m-0 leading-tight">Patente: ${driver.vehiclePlate}</h4>
         <div class="mt-1 flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full ${driver.status === 'en_ruta' ? 'bg-emerald-500' : driver.status === 'idle' ? 'bg-amber-500' : 'bg-slate-400'}"></span>
           <span class="text-xs text-slate-600 capitalize font-medium">${driver.status.replace('_', ' ')}</span>
@@ -254,8 +254,8 @@ const updateDriverHighlight = (driverId: string | null | undefined, highlighted:
   const iconAnchor = highlighted ? [18, 18] : [14, 14];
 
   const customIcon = L.divIcon({
-    className: `${colorClass} text-white rounded-full flex items-center justify-center font-bold text-xs shadow-lg border-2 transition-all duration-200`,
-    html: `<span style="font-size: ${highlighted ? 16 : 13}px; transform: scaleX(-1); display: inline-block;">🚚</span>`,
+    className: '',
+    html: `<div style="width:${iconSize[0]}px;height:${iconSize[1]}px;border-radius:9999px;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:1;${highlighted ? 'box-shadow:0 0 0 4px rgba(99,102,241,0.3);' : 'box-shadow:0 2px 8px rgba(0,0,0,0.25);'}border:2px solid white;" class="${colorClass}"><svg width="${highlighted ? 16 : 12}" height="${highlighted ? 16 : 12}" viewBox="0 0 24 24" fill="white"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>`,
     iconSize: iconSize as [number, number],
     iconAnchor: iconAnchor as [number, number]
   });
