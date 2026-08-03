@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
     <ClientOnly>
     <div class="w-full max-w-md">
-      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl">
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-xl">
         <div class="text-center mb-8">
           <div class="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,27 +14,8 @@
         </div>
 
         <form @submit.prevent="handleLogin" class="space-y-5">
-          <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-1.5">Email</label>
-            <input
-              v-model="email"
-              type="email"
-              placeholder="tu@email.com"
-              class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
-              :disabled="loading"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-1.5">Contraseña</label>
-            <input
-              v-model="password"
-              type="password"
-              placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
-              :disabled="loading"
-            />
-          </div>
+          <FormField v-model="email" label="Email" type="email" placeholder="tu@email.com" :disabled="loading" />
+          <FormField v-model="password" label="Contraseña" type="password" placeholder="••••••••" :disabled="loading" />
 
           <div v-if="error" class="px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
             {{ error }}
